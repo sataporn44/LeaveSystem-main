@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>Approve Leave</title>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/approve.css' %}">
+
+{% endblock title %}
+
+{% block content %}
+
+<div class="container emp-profile">
+    <h2 class="text-center">คำขออนุมัติการลา</h2>
+    <div class="container">
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Type</th>  
+                <th scope="col">From Date</th>
+                <th scope="col">To Date</th>
+                <th scope="col">Number</th>
+                <th scope="col">Reason</th>
+                <th scope="col">Approve</th>   
+                <th scope="col">Decline</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for person in allow %}
+            <tr>
+                <th scope="row">{{person.username}}</th>
+                <td>{{person.typeleave}}</td>
+                <td>{{person.From_Date}}</td>
+                <td>{{person.To_Date}}</td>
+                <td>{{person.numberleave}}</td>
+                <td>{{person.reason}}</td>
+                <td><a href='success/{{person.id}}' class="btn btn-success" >Approve</a></td>
+                <td><a href='unsuccess/{{person.id}}'  class="btn btn-warning" >Decline</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+   
+{% endblock content %}  

@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>หน้ากรอกข้อมูล</title>
+    <link rel="stylesheet" href="{% static 'css/createForm.css' %}">
+    <!-- <script src="{% static 'js/createForm.js' %}" ></script> -->
+  
+{% endblock %}
+
+
+{% block content %}
+<div class="formbold-main-wrapper">
+    <div class="formbold-form-wrapper">
+      <img src="https://static.vecteezy.com/system/resources/previews/005/604/619/original/male-and-female-personnel-stand-in-front-of-the-job-applicant-list-concept-of-choosing-workers-or-personnel-recruiting-or-hiring-staff-cartoon-illustration-vector.jpg">
+      <form action="/addForm/" method="post" id="register_form">
+        {% csrf_token %}
+        <div class="formbold-form-title">
+          <h2>Register Form</h2>
+        </div>
+
+        <div class="formbold-mb-3">
+            <label for="username" class="formbold-form-label">
+              Username
+            </label>
+            <input
+              type="text"
+              name="username"
+              id="username"
+              class="formbold-form-input"
+            />
+            <small></small>
+        </div>
+  
+        <div class="formbold-input-flex">
+          <div>
+            <label for="first_name" class="formbold-form-label">
+              First name
+            </label>
+            <input
+              type="text"
+              name="first_name"
+              id="first_name"
+              class="formbold-form-input"
+            />
+          </div>
+          <div>
+            <label for="last_name" class="formbold-form-label"> Last name </label>
+            <input
+              type="text"
+              name="last_name"
+              id="last_name"
+              class="formbold-form-input"
+            />
+          </div>
+        </div>
+  
+        <div class="formbold-input-flex">
+          <div>
+            <label for="nickname" class="formbold-form-label"> Nickname </label>
+            <input
+              type="text"
+              name="nickname"
+              id="nickname"
+              class="formbold-form-input"
+            />
+          </div>
+          <div>
+            <label for="tel" class="formbold-form-label"> Phone number </label>
+            <input
+              type="tel"
+              name="tel"
+              id="phone"
+              class="formbold-form-input"
+            />
+          </div>
+        </div>
+  
+        <div class="formbold-mb-3">
+          <label for="email" class="formbold-form-label">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            class="formbold-form-input"
+          />
+        </div>
+
+        <div class="formbold-input-flex">
+            <div>
+              <label for="team" class="formbold-form-label"> Team </label>
+              <input
+                type="text"
+                name="team"
+                id="team"
+                class="formbold-form-input"
+              />
+            </div>
+            <div>
+              <label for="position" class="formbold-form-label"> Position </label>
+              <input
+                type="text"
+                name="position"
+                id="position"
+                class="formbold-form-input"
+              />
+            </div>
+        </div>
+
+        <div class="formbold-input-flex">
+          <div >
+              <label for="leader" class="formbold-form-label"> Leader </label>
+              <input
+                type="text"
+                name="leader"
+                id="leader"
+                class="formbold-form-input"
+              />
+          </div>
+          <div>
+            <label for="level" class="formbold-form-label">
+              Level
+            </label>
+            <input
+              type="level"
+              name="level"
+              id="level"
+              class="formbold-form-input"
+            />
+          </div>
+        </div>
+
+        <div class="formbold-mb-3">
+            <label for="password" class="formbold-form-label">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              class="formbold-form-input"
+            />
+          </div>
+
+        <button type="submit" class="formbold-btn" onclick="checkInput()">SAVE</button>
+    
+      </form>
+
+        <script>
+          form.addEventListener('submit',function(e){
+            e.preventDefault();
+            if (username.value==='') {
+              showerror(username,"Please insert Username");
+            }
+            else{
+              showsuccess();
+            }
+          })
+
+          function showerror(input,messege){
+            const formBold = input.parentElement ;  //ส่งไปตัวเเม่
+            formold.className='formbold error'
+
+          }
+
+          function showsuccess(){
+          }
+
+          function detecNull(user,first,last,nick,phone,email,team,position,leader,level,password){
+            if(user == ""){
+              window.alert("Please insert Username");
+              return false ;
+            } else if (first == "") {
+              window.alert("Please insert Firstname");
+              return false ;
+            } else if (last == "") {
+              window.alert("Please insert Lastname");
+              return false ;
+            } else if (nick == "") {
+              window.alert("Please insert Nickname");
+              return false ;
+            } else if (phone == "") {
+              window.alert("Please insert Phone number");
+              return false ;
+            } else if (email == "") {
+              window.alert("Please insert Email");
+              return false ;
+            } else if (team == "") {
+              window.alert("Please insert Team");
+              return false ;
+            } else if (position == "") {
+              window.alert("Please insert Position");
+              return false ;
+            } else if (leader == "") {
+              window.alert("Please insert Leader");
+              return false ;
+            } else if (level == "") {
+              window.alert("Please insert Level");
+              return false ;
+            } else if (password == "") {
+              window.alert("Please insert Password");
+              return false ;
+            }
+          }
+          
+          function checkInput(){
+            var username = document.getElementById("username").value
+            var firstname = document.getElementById("first_name").value
+            var lastname = document.getElementById("last_name").value
+            var nickname = document.getElementById("nickname").value
+            var phone = document.getElementById("phone").value
+            var email = document.getElementById("email").value
+            var team = document.getElementById("team").value            
+            var position = document.getElementById("position").value
+            var leader = document.getElementById("leader").value
+            var level = document.getElementById("level").value            
+            var password = document.getElementById("password").value
+
+            detecNull(username,firstname,lastname,nickname,phone,email,team,position,leader,level,password)
+          }   
+        </script>
+  </div>
+</div>
+
+{% endblock content %}
+
+
+      
+    

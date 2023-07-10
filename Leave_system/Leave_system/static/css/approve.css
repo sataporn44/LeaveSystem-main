@@ -1,0 +1,18 @@
+body{    
+    background-image: url('https://cdn.pixabay.com/photo/2023/05/28/09/24/south-tyrol-8023224_1280.jpg');
+    background-size: cover;
+}
+.emp-profile{
+    padding: 2%;
+    margin-top: 6.5%;
+    margin-bottom: 3%;
+    border-radius: 0.5rem;
+    background: #fff; 
+}
+.text-center {
+    padding: 20px;
+}
+.container {
+    padding: 5px 36px;
+    text-align: center;
+}

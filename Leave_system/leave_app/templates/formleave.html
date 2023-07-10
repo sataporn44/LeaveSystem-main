@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave system</title>
+    
+    <link rel="stylesheet" href="{% static 'css/fontawesome/css/all.css' %}" />
+    <link href="http://code.jquery.com/ui/1.9.2/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="{% static 'css/formleave.css' %}">
+
+{% endblock title %}
+
+{% block content %}
+  
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span class="msg"> Warning : {{message}}</span>
+
+            {% comment %} <div class="alert alert-danger" role="alert">
+            <storng>{{message}}</storng>
+            </div> {% endcomment %}
+        </div> 
+      {% endfor %}
+    {% endif %}
+
+    <div class="formbold-main-wrapper">
+        <div class="formbold-form-wrapper">
+          <img src="https://img.freepik.com/premium-vector/vector-illustration-girl-online-assistant-work-promotion-network-manager-remote-job-business-mechanism-abstract-background-with-gears-business-promotion-strategy-analysis_419010-596.jpg?w=2000">
+          <form action="formleave" method="post" id="register_form">
+            {% csrf_token %}
+            <div class="formbold-form-title">
+              <h2>Leave Form</h2>
+            </div>
+
+            <div class="formbold-mb-3">
+              <select name="typeleave" class="form-control mb-3" aria-label="Default select example">
+                <option selected>Open the select type</option>
+                <option value="S">Sick Leave</option>
+                <option value="P">Personal Leave</option>
+                <option value="V">Vacation Leave</option>
+              </select>
+            </div>
+
+            <div class="formbold-input-flex ">
+              <div class="leaveDate">
+                <label for="From_Date" >From </label>
+                <input type="text" id="datepicker_1" name="From_Date" required onchange="calculateLeaveDays()" />
+              </div>
+              <div class="leaveDate">
+                <label for="To_Date">To</label>
+                <input type="text" id="datepicker_2" name="To_Date" required onchange="calculateLeaveDays()"  disabled />
+              </div>
+            </div>
+
+            <div class="formbold-mb-3">
+              <!-- <label for="numberLeave" class="formbold-form-label">
+                Number of Leave Day
+              </label> -->
+              <input
+                type="number"
+                name="numberleave"
+                id="numberLeave"
+                class="formbold-form-input"
+                placeholder="Number of Leave Day" disabled
+              />
+            </div>
+
+            <div class="formbold-mb-3">
+                <!-- <label for="reason" class="formbold-form-label">
+                  Reason
+                </label> -->
+                <input
+                  type="text"
+                  name="reason"
+                  id="reason"
+                  class="formbold-form-input"
+                  placeholder="Reason"
+                />
+            </div>
+
+            <input type="submit" value="submit" class="formbold-btn1">
+            <a href='status' class="formbold-btn2">status</a>
+
+          </form>
+        </div>
+      </div>
+{% endblock content %}  
+
+{% block script %}  
+<script src="{% static 'js/formleave.js' %}" ></script>
+
+{% endblock %}

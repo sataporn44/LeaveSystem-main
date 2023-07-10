@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>status</title>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/status.css' %}">
+
+{% endblock title %}
+
+{% block content %}
+
+<div class="container emp-profile">
+    {% if user.is_authenticated %}
+        <h2 class="text-center">สถานะการลา : {{user.username}}</h2>
+        <div class="d-flex justify-content-center" >
+
+    {% endif %}
+
+  
+    {% for num in all_number %}
+        <div class="card ">
+            <div class="container">
+            <h5>Sick Leave</h5>
+            <p>{{num.sick}} วัน </p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="container">
+            <h5>Personal Leave</h5>
+            <p>{{num.personal}} วัน </p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="container">
+            <h5>Vacation Leave</h5>
+            <p>{{num.vacation}} วัน </p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col">Type</th>
+            <th scope="col">From Date</th>
+            <th scope="col">To Date</th>
+            <th scope="col">Numberleave</th>
+            <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for person in all_person %}
+            <tr>
+                <th scope="row">{{person.typeleave}}</th>
+                <td>{{person.From_Date}}</td>
+                <td>{{person.To_Date}}</td>
+                <td>{{person.numberleave}}</td>
+                {% if person.show == 1 %}
+                    <td style="color:MediumSeaGreen;">ดำเนินการเสร็จสิ้น</td>
+                {% else %}
+                    <td style="color:Tomato;">รอดำเนินการ</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+</div>
+   
+{% endblock content %}  

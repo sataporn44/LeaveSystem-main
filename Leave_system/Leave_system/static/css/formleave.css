@@ -1,0 +1,245 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  background-image: url('https://cdn.pixabay.com/photo/2023/05/28/09/24/south-tyrol-8023224_1280.jpg');
+  background-size: cover;
+  }
+  
+.emp-profile{
+  padding: 3%;
+  margin-top: 3%;
+  margin-bottom: 3%;
+  border-radius: 0.5rem;
+  background: #fff;
+  }
+img{
+  width: 50%;
+  position: relative;
+  left: 13%;
+  margin-top: -8%;
+  margin-left: 12%;
+}
+.formbold-mb-3 {
+  margin-bottom: 15px;
+}
+.formbold-relative {
+  position: relative;
+}
+.formbold-opacity-0 {
+  opacity: 0;
+}
+.formbold-stroke-current {
+  stroke: currentColor;
+}
+
+.formbold-main-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+}
+
+.formbold-form-wrapper {
+  margin: 0 auto;
+  max-width: 570px;
+  width: 100%;
+  background: white;
+  padding: 40px;
+}
+
+.formbold-form-title {
+  margin-bottom: 30px;
+}
+
+h2{
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 34px;
+  color: #07074d;
+  text-align: center;
+  margin-top: -5px;
+}
+.formbold-input-flex {
+  display: flex;
+  gap: 75px;
+  margin-bottom: 15px;
+  color: #536387;
+}
+
+.formbold-input-flex > div {
+  width: 50%;
+}
+
+.formbold-form-input {
+  text-align: left;
+  width: 100%;
+  padding: 13px 22px;
+  border-radius: 5px;
+  border: 1px solid #dde3ec;
+  background: #ffffff;
+  font-weight: 500;
+  font-size: 16px;
+  color: #536387;
+  outline: none;
+  resize: none;
+}
+.formbold-form-input:focus {
+  border-color: #3365b5;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+}
+.formbold-form-label {
+  color: #536387;
+  font-size: 14px;
+  line-height: 24px;
+  display: block;
+  margin-bottom: 10px;
+}
+select{
+  appearance: none;
+  text-align: left;
+  color: #536387;
+  border: 1px solid #dde3ec;
+  background: #ffffff;
+  font-weight: 500;
+  font-size: 16px;
+  width: 100%;
+  padding: 13px 22px;
+  border-radius: 5px;
+  line-height: 24px;
+  
+  
+  background-image:
+  linear-gradient(45deg, transparent 50%, gray 50%),
+  linear-gradient(135deg, gray 50%, transparent 50%),
+  linear-gradient(to right, #ccc, #ccc);
+
+  background-position:
+  calc(100% - 20px) calc(1em + 2px),
+  calc(100% - 15px) calc(1em + 2px),
+  calc(100% - 2.5em) 0.5em;
+
+  background-size:
+  5px 5px,
+  5px 5px,
+  1px 1.5em;
+
+  background-repeat: no-repeat;
+}
+
+select:focus{
+  border-color:#3365b5;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+select:hover{
+  cursor: pointer; 
+}
+
+.select-input.form-control[readonly]:not([disabled]) {
+  font-size: 1rem;
+  line-height: 2.15;
+  padding-left: .75em;
+  padding-right: .75em;
+}
+
+.formbold-btn1 {
+  font-size: 16px;
+  border-radius: 5px;
+  padding: 14px 25px;
+  border: none;
+  font-weight: 500;
+  background-color:#3365b5;
+  color: white;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.formbold-btn2 {
+  font-size: 16px;
+  border-radius: 5px;
+  padding: 14px 25px;
+  border: none;
+  font-weight: 500;
+  background-color:#6bcde3;
+  color: white;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.formbold-btn:hover {
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.leaveDate{
+  font-size: 14px;
+}
+
+.leaveDate:hover{
+  cursor: pointer; 
+}
+
+input[type="date"]{
+  background-color: #f6f6f6;;
+  padding: 15px;
+  position: relative;
+  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 50%;
+  font-family: "Roboto Mono",monospace;
+  color: #000;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+}
+
+input[type="date"]:hover {
+  box-shadow: 0px 3px 8px #dde3ec;
+  cursor: pointer;
+}
+
+input::placeholder{
+  font-size: 14px;
+}
+.alert{
+  background: #ffdb9b ;
+  padding: 20px 40px ;
+  min-width: 420px ;
+  position: absolute;
+  z-index: 9999;
+  left: 50% ;
+  transform: translateX(-50%);
+  top: 45px;
+  overflow: hidden;
+  border-radius: 4px;
+  border-left: 8px solid #ffa502;
+}
+.alert .fa-circle-exclamation{
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ce8500;
+  font-size: 30px;
+}
+.alert .msg{
+  padding: 0px 20px ;
+  font-size: 18px;
+  color: #ce8500;
+}
+
+input{
+    padding:5px;
+    background-color:#eeeeee;
+}
+h2{
+    text-align: center;
+    margin-top: 100px;
+    font-weight: 600;
+} 
