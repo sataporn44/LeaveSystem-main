@@ -8,17 +8,16 @@ urlpatterns = [
     
     
     path('', views.home),
-    path('info', views.info),
+    path('info', views.info, name='info'),
     path('login',views.login),
-    path('hr', views.hr),
-    path('HRleader/', views.HRleader),
-    path('leader/', views.leader),
     path('createForm/', views.createForm),
     path('addForm/', views.addForm),
     path('result/', views.result),
     path('logout', views.logout),
     path('formleave',views.formleave),
-    path('status',views.status),
+    path('edit/<person_id>/',views.edit, name='edit'), ##(ชื่อpath/<ชื่อพารามิเตอร์>,กระบวนการทำงาน)
+    path('delete/<person_id>/',views.delete),
+    path('status/',views.status),
     path('approve',views.approve),
     path('success/<person_id>',views.success),
     path('unsuccess/<person_id>',views.unsuccess),

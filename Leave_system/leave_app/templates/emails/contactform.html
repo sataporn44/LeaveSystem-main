@@ -1,2 +1,76 @@
-<p> เรื่อง ขออนุญาติลา </p>
-<p><b> Name : </b> {{name}} </p>
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #fff;
+                margin: 0;
+                padding: 0;
+              }
+              
+            .container {
+                max-width: 600px;
+                margin: left ;
+                background-color: #fff;
+                padding: 20px;
+                box-sizing: border-box;
+                border: 1px solid #fff;
+                border-radius: 5px;
+              }
+            .centered-div {
+                width: 300px; 
+                margin: 0 auto; 
+                }
+            .right-aligned {
+                text-align: right; 
+                }
+            .highlight-text:hover {
+                color: #fff;
+                background-color: blue;
+                }
+
+        </style>
+    </head>
+
+
+
+    <body>
+        {% for per in person %}
+        <h2> แอคชัวเรียล บิสซิเนส โซลูชั่น </h2>
+        <hr>
+        <div class="container">
+
+            <h3> เรียน {{leader_frist}} {{leader_last}} </h3>
+            <p> อีเมลล์แจ้งขออนุมัติการลาระดับ 1 มีรายละเอียดดังนี้ </p>
+
+            <h3><ins> รายละเอียดส่วนบุคคล </ins></h3> 
+            <div class="centered-div">
+                <p><b> ชื่อ-นามสกุล : </b> {{per.first_name}} {{per.last_name}} </p>
+                <p><b> ตำแหน่ง : </b> {{per.position}} </p>
+                <p><b> ทีม : </b> {{per.team}} </p>
+                <p><b> ระดับ : </b> {{per.level}} </p>
+            </div>
+
+
+            <h3><ins> รายละเอียดการลา </ins></h3> 
+
+            <div class="centered-div">
+                <p><b> ประเภทการลา : </b> {{type}} </p>
+                <p><b> จำนวนวันที่ขอลา : </b> {{numberleave}} </p>
+                <p><b> วันที่ขอลา : </b> {{From_Date}} - {{To_Date}}</p>
+                <p><b> เหตุผล : </b> {{reason}} </p>
+                <p><b> สิทธิลาคงเหลือ : </b> {{leave_remain}} วัน </p>
+
+            </div>
+        
+            <div class="right-aligned">
+                <b>พิจารณาอนุมัติการลา <ins><a href = 'http://127.0.0.1:8000/' class ='highlight-text'>คลิกที่นี่</a><ins><b>
+            </div>
+        </div>
+            <hr>
+
+
+        {% endfor %}
+    </body>
+</html>

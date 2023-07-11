@@ -4,12 +4,25 @@
 {% block title %}
     <title>หน้ากรอกข้อมูล</title>
     <link rel="stylesheet" href="{% static 'css/createForm.css' %}">
-    <!-- <script src="{% static 'js/createForm.js' %}" ></script> -->
+    <script src="{% static 'js/createForm.js' %}" ></script>
   
 {% endblock %}
 
 
 {% block content %}
+{% if messages %}
+{% for message in messages %}
+  <div class="alert">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <span class="msg"> Warning : {{message}}</span>
+
+      {% comment %} <div class="alert alert-danger" role="alert">
+      <storng>{{message}}</storng>
+      </div> {% endcomment %}
+  </div> 
+{% endfor %}
+{% endif %}
+
 <div class="formbold-main-wrapper">
     <div class="formbold-form-wrapper">
       <img src="https://static.vecteezy.com/system/resources/previews/005/604/619/original/male-and-female-personnel-stand-in-front-of-the-job-applicant-list-concept-of-choosing-workers-or-personnel-recruiting-or-hiring-staff-cartoon-illustration-vector.jpg">
@@ -27,9 +40,10 @@
               type="text"
               name="username"
               id="username"
+              value="{{ username }}" 
               class="formbold-form-input"
+              {% comment %} required / เด้งข้อความเมื่อลืมกรอกในกล่องนี้ แต่ไม่มีกล่องแดง {% endcomment %}
             />
-            <small></small>
         </div>
   
         <div class="formbold-input-flex">
@@ -41,6 +55,7 @@
               type="text"
               name="first_name"
               id="first_name"
+              value="{{ first_name }}" 
               class="formbold-form-input"
             />
           </div>
@@ -50,6 +65,7 @@
               type="text"
               name="last_name"
               id="last_name"
+              value="{{ last_name }}" 
               class="formbold-form-input"
             />
           </div>
@@ -62,6 +78,7 @@
               type="text"
               name="nickname"
               id="nickname"
+              value="{{ nickname }}" 
               class="formbold-form-input"
             />
           </div>
@@ -71,6 +88,7 @@
               type="tel"
               name="tel"
               id="phone"
+              value="{{ tel }}" 
               class="formbold-form-input"
             />
           </div>
@@ -84,6 +102,7 @@
             type="email"
             name="email"
             id="email"
+            value="{{ email }}" 
             class="formbold-form-input"
           />
         </div>
@@ -95,6 +114,7 @@
                 type="text"
                 name="team"
                 id="team"
+                value="{{ team }}" 
                 class="formbold-form-input"
               />
             </div>
@@ -104,6 +124,7 @@
                 type="text"
                 name="position"
                 id="position"
+                value="{{ position }}" 
                 class="formbold-form-input"
               />
             </div>
@@ -116,6 +137,7 @@
                 type="text"
                 name="leader"
                 id="leader"
+                value="{{ leader }}" 
                 class="formbold-form-input"
               />
           </div>
@@ -127,6 +149,7 @@
               type="level"
               name="level"
               id="level"
+              value="{{ level }}" 
               class="formbold-form-input"
             />
           </div>
@@ -140,87 +163,15 @@
               type="password"
               name="password"
               id="password"
+              value="{{ password }}" 
               class="formbold-form-input"
             />
           </div>
 
-        <button type="submit" class="formbold-btn" onclick="checkInput()">SAVE</button>
-    
+        <button type="submit" class="formbold-btn" onclick="return checkInput()">SAVE</button>
+
       </form>
 
-        <script>
-          form.addEventListener('submit',function(e){
-            e.preventDefault();
-            if (username.value==='') {
-              showerror(username,"Please insert Username");
-            }
-            else{
-              showsuccess();
-            }
-          })
-
-          function showerror(input,messege){
-            const formBold = input.parentElement ;  //ส่งไปตัวเเม่
-            formold.className='formbold error'
-
-          }
-
-          function showsuccess(){
-          }
-
-          function detecNull(user,first,last,nick,phone,email,team,position,leader,level,password){
-            if(user == ""){
-              window.alert("Please insert Username");
-              return false ;
-            } else if (first == "") {
-              window.alert("Please insert Firstname");
-              return false ;
-            } else if (last == "") {
-              window.alert("Please insert Lastname");
-              return false ;
-            } else if (nick == "") {
-              window.alert("Please insert Nickname");
-              return false ;
-            } else if (phone == "") {
-              window.alert("Please insert Phone number");
-              return false ;
-            } else if (email == "") {
-              window.alert("Please insert Email");
-              return false ;
-            } else if (team == "") {
-              window.alert("Please insert Team");
-              return false ;
-            } else if (position == "") {
-              window.alert("Please insert Position");
-              return false ;
-            } else if (leader == "") {
-              window.alert("Please insert Leader");
-              return false ;
-            } else if (level == "") {
-              window.alert("Please insert Level");
-              return false ;
-            } else if (password == "") {
-              window.alert("Please insert Password");
-              return false ;
-            }
-          }
-          
-          function checkInput(){
-            var username = document.getElementById("username").value
-            var firstname = document.getElementById("first_name").value
-            var lastname = document.getElementById("last_name").value
-            var nickname = document.getElementById("nickname").value
-            var phone = document.getElementById("phone").value
-            var email = document.getElementById("email").value
-            var team = document.getElementById("team").value            
-            var position = document.getElementById("position").value
-            var leader = document.getElementById("leader").value
-            var level = document.getElementById("level").value            
-            var password = document.getElementById("password").value
-
-            detecNull(username,firstname,lastname,nickname,phone,email,team,position,leader,level,password)
-          }   
-        </script>
   </div>
 </div>
 

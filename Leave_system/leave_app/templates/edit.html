@@ -12,22 +12,22 @@
     <link rel="stylesheet" href="{% static 'css/formleave.css' %}">
 {% endblock title %}
 
+
 {% block content %}
     
     {% if messages %}
       {% for message in messages %}
         <div class="alert">
           <i class="fa-solid fa-circle-exclamation"></i>
-          <span class="msg"> Warning : {{message}}</span>
-
+          <span class="msg"> {{message}}</span>
         </div> 
       {% endfor %}
     {% endif %}
-
+    
     <div class="formbold-main-wrapper">
         <div class="formbold-form-wrapper">
           <img src="https://img.freepik.com/premium-vector/vector-illustration-girl-online-assistant-work-promotion-network-manager-remote-job-business-mechanism-abstract-background-with-gears-business-promotion-strategy-analysis_419010-596.jpg?w=2000">
-          <form action="formleave" method="post" id="register_form">
+          <form method="post" id="register_form">
             {% csrf_token %}
             <div class="formbold-form-title">
               <h2>Leave Form</h2>
@@ -36,20 +36,20 @@
             <div class="formbold-mb-3">
               <select name="typeleave" class="form-control mb-3" aria-label="Default select example">
                 <option selected>Open the select type</option>
-                <option value="S">Sick Leave</option>
-                <option value="P">Personal Leave</option>
-                <option value="V">Vacation Leave</option>
+                <option value="S" {% if form.typeleave == 'S' %}selected{% endif %}>Sick Leave</option>
+                <option value="P" {% if form.typeleave == 'P' %}selected{% endif %}>Personal Leave</option>
+                <option value="V" {% if form.typeleave == 'V' %}selected{% endif %}>Vacation Leave</option>
               </select>
             </div>
 
             <div class="formbold-input-flex ">
               <div class="leaveDate">
                 <label for="From_Date" >From </label>
-                <input type="text" id="datepicker_1" name="From_Date" required onchange="calculateLeaveDays()" />
+                <input type="text" id="datepicker_1" name="From_Date" value="{{form.From_Date|date:'d b Y'}}" required onchange="calculateLeaveDays()" />
               </div>
               <div class="leaveDate">
                 <label for="To_Date">To</label>
-                <input type="text" id="datepicker_2" name="To_Date" required onchange="calculateLeaveDays()" disabled  />
+                <input type="text" id="datepicker_2" name="To_Date" value="{{form.To_Date|date:'d b Y'}}" required onchange="calculateLeaveDays()"  />
               </div>
             </div>
 
@@ -62,7 +62,8 @@
                 name="numberleave"
                 id="numberLeave"
                 class="formbold-form-input"
-                placeholder="Number of Leave Day" disabled
+                placeholder="Number of Leave Day" 
+                value="{{form.numberleave}}"
               />
             </div>
 
@@ -76,11 +77,12 @@
                   id="reason"
                   class="formbold-form-input"
                   placeholder="Reason"
+                  value="{{form.reason}}"
                 />
             </div>
 
             <input type="submit" value="submit" class="formbold-btn1">
-            <a href='status' class="formbold-btn2">status</a>
+            <a href='/status' class="formbold-btn2">status</a>
 
           </form>
         </div>
@@ -90,5 +92,6 @@
 {% endblock content %}  
 
 {% block script %}  
-<script src="{% static 'js/formleave.js' %}" ></script>
+<script src="{% static 'js/edit.js' %}"></script>
+
 {% endblock %}

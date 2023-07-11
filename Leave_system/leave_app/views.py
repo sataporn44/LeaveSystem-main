@@ -6,18 +6,17 @@ from leave_app.models import Form , Number ,Person
 from django.contrib.auth.models import User,auth
 from django.contrib.auth import authenticate
 from datetime import datetime
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.template.loader import render_to_string
 from django.core.mail import send_mail
-from django.http import HttpResponseRedirect
-
-
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
 def home(request) :
     return render(request,"home.html")
 
+@login_required
 def info(request):
     try:
         person=Person.objects.get(username=request.username)
@@ -45,16 +44,6 @@ def login(request):
     else:
         messages.info(request, 'Username or Password is incorrect')
         return redirect('/')
-    
-    
-def hr(request):
-    return render(request, 'hr.html')
-
-def HRleader(request):
-    return render(request, 'HRleader.html')
-
-def leader(request):
-    return render(request, 'leader.html')
 
 def createForm(request):
     return render(request, 'createForm.html')
@@ -73,7 +62,16 @@ def addForm(request):
         leader=request.POST.get('leader')
         level=request.POST.get('level')
 
+        # ตรวจสอบข้อมูลที่รับมาจากฟอร์ม
+        if not username:
+            messages.error(request, "กรุณากรอกชื่อผู้ใช้งาน")
+            return render(request, "createForm.html", {
+                'username': username, 'first_name': first_name, 'last_name': last_name,
+                'nickname': nickname, 'tel': tel, 'team': team, 'position': position,
+                'email': email, 'password': password, 'leader': leader, 'level': level
+            })
 
+        # สร้างและบันทึกข้อมูล
         person=Person.objects.create(
             username=username,
             first_name=first_name,
@@ -110,43 +108,55 @@ def formleave(request) :
         To_Date = request.POST["To_Date"]
         reason = request.POST["reason"]
         
+        date_format = "%d %b %Y"
+        From_Date = datetime.strptime(From_Date, date_format).strftime("%Y-%m-%d")
+        To_Date = datetime.strptime(To_Date, date_format).strftime("%Y-%m-%d")
+        
+        existing_form = Form.objects.filter(
+        username_id=username_id,
+        From_Date__lte=To_Date,  # ตรวจสอบวันที่เริ่มต้นก่อนหรือเท่ากับวันที่สิ้นสุด
+        To_Date__gte=From_Date  # ตรวจสอบวันที่สิ้นสุดหลังหรือเท่ากับวันที่เริ่มต้น
+        ).first()
+
+        if existing_form:
+            # ฟอร์มการลาซ้ำกับวันที่มีอยู่ในช่วงเวลาที่กำหนด
+            messages.success(request, "ฟอร์มการลาซ้ำกับวันที่มีอยู่ในช่วงเวลาที่กำหนด")
+            return redirect('/formleave')
+        
+        
         #check have day leave
         number_instance = Number.objects.filter(username_id=username_id).first()
         
         if typeleave =='S' :
+            type = 'ลาป่วย'
             form_instance = Form.objects.filter(username_id=username_id,show=0,typeleave='S').aggregate(total_sum=Sum('numberleave'))
             form_sum = form_instance['total_sum'] if form_instance['total_sum'] is not None else 0
             remain = number_instance.sick - form_sum
+            leave_remain = number_instance.sick
             if remain < int(numberleave) :
                messages.success(request,"วันลาป่วยของคุณไม่เพียงพอ กรุณากรอกฟอร์มขอลาใหม่อีกครั้ง")
                return redirect('/formleave')        
             
         elif typeleave =='P' :
+            type = 'ลากิจ'
             form_instance = Form.objects.filter(username_id=username_id,show=0,typeleave='P').aggregate(total_sum=Sum('numberleave'))
             form_sum = form_instance['total_sum'] if form_instance['total_sum'] is not None else 0
             remain = number_instance.personal - form_sum
+            leave_remain = number_instance.personal
             if remain < int(numberleave) :
                messages.success(request,"วันลากิจของคุณไม่เพียงพอ กรุณากรอกฟอร์มขอลาใหม่อีกครั้ง")
                return redirect('/formleave')      
            
         else :
+            type = 'ลาพักร้อน'
             form_instance = Form.objects.filter(username_id=username_id,show=0,typeleave='V').aggregate(total_sum=Sum('numberleave'))
             form_sum = form_instance['total_sum'] if form_instance['total_sum'] is not None else 0
             remain = number_instance.vacation - form_sum
+            leave_remain = number_instance.vacation
             if remain < int(numberleave) :
                messages.success(request,"วันลาพักร้อนของคุณไม่เพียงพอ กรุณากรอกฟอร์มขอลาใหม่อีกครั้ง")
                return redirect('/formleave')  
-
-        #check number of leave
-        date_format = "%Y-%m-%d"
-        x = datetime.strptime(From_Date, date_format).date()
-        y = datetime.strptime(To_Date, date_format).date()
-        difference = y - x
-        if int(numberleave) != ((difference.days)+1) :
-            messages.success(request,"จำนวนวันลาไม่ถูกต้อง กรุณากรอกฟอร์มขอลาใหม่อีกครั้ง")
-            return redirect('/formleave')  
-        
-        
+    
         #บันทึกข้อมูล
         form = Form.objects.create(
             # name=name,
@@ -163,28 +173,127 @@ def formleave(request) :
         leader = request.user.leader
         person_instance = Person.objects.filter(username=leader).first()
         leader_email = person_instance.email
+        leader_frist = person_instance.first_name
+        leader_last = person_instance.last_name
+
+        formatted_From = datetime.strptime(form.From_Date, "%Y-%m-%d").strftime("%d %b %Y")
+        formatted_To = datetime.strptime(form.To_Date, "%Y-%m-%d").strftime("%d %b %Y")
         
-        name = request.user.username
+        username = request.user.username
+        person = Person.objects.filter(username=username)        
         html = render_to_string('emails/contactform.html',{
-            'name':name
+            'leader_frist':leader_frist,
+            'leader_last':leader_last,
+            'person':person,
+            'type':type,
+            'numberleave':numberleave,
+            'From_Date':formatted_From,
+            'To_Date':formatted_To,
+            'reason':reason,
+            'leave_remain':leave_remain
         })
         
-        send_mail('Hi','Hello', 'patinya590@gmail.com' , [leader_email],html_message=html)
-
-        # send email
-        # subject = 'Test Email : Leave System'
-        # body = '''
-        #     <p> เรื่อง ขออนุญาติลา </p>
-        #     .......................
-        # '''
-        # email = EmailMessage(subject=subject , body=body , to=[leader_email])
-        # email.content_subtype = 'html'
-        # email.send()
-        # messages.success(request,"รอการยืนยัน")
-        #เปลี่ยนเส้นทาง
+        send_mail('เรื่อง ขออนุญาติลา','Hello', 'patinya590@gmail.com' , [leader_email],html_message=html)
         return redirect('/status')        
     return render(request, 'formleave.html') 
 
+def edit(request,person_id) :
+    if request.method == "POST" :
+    #เมื่อมีการส่งข้อมูลมา
+        form = Form.objects.get(pk=person_id)     #ดึงข้อมูลประชากรที่ต้องการแก้ไข
+        form.typeleave = request.POST["typeleave"]           #แก้ไขข้อมูลใหม่ตามที่ส่งมาจากแบบฟอร์ม
+        form.numberleave = request.POST["numberleave"]           #แก้ไขข้อมูลใหม่ตามที่ส่งมาจากแบบฟอร์ม
+        form.From_Date = request.POST["From_Date"]
+        form.To_Date = request.POST["To_Date"]
+        form.reason = request.POST["reason"]
+        
+        date_format = "%d %b %Y"
+        form.From_Date = datetime.strptime(form.From_Date, date_format).strftime("%Y-%m-%d")
+        form.To_Date = datetime.strptime(form.To_Date, date_format).strftime("%Y-%m-%d")
+        username_id = request.user.id           #ข้อมูลของผู้login
+
+        existing_form = Form.objects.filter(
+            Q(username_id=username_id) & ~Q(pk=person_id),
+            From_Date__lte=form.To_Date,  # ตรวจสอบวันที่เริ่มต้นก่อนหรือเท่ากับวันที่สิ้นสุด
+            To_Date__gte=form.From_Date  # ตรวจสอบวันที่สิ้นสุดหลังหรือเท่ากับวันที่เริ่มต้น
+        ).first()
+
+        if existing_form:
+            # ฟอร์มการลาซ้ำกับวันที่มีอยู่ในช่วงเวลาที่กำหนด
+            messages.success(request, "ฟอร์มการลาซ้ำกับวันที่มีอยู่ในช่วงเวลาที่กำหนด")
+            return redirect('/formleave')
+        
+        
+        #check have day leave
+        number_instance = Number.objects.filter(username_id=username_id).first()
+        
+        if form.typeleave =='S' :
+            type = 'ลาป่วย'
+            form_instance = Form.objects.filter(username_id=username_id,show=0,typeleave='S').aggregate(total_sum=Sum('numberleave'))
+            form_sum = form_instance['total_sum'] if form_instance['total_sum'] is not None else 0
+            remain = number_instance.sick - form_sum
+            leave_remain = number_instance.sick
+            if remain < int(form.numberleave) :
+               messages.success(request,"วันลาป่วยของคุณไม่เพียงพอ กรุณากรอกฟอร์มขอลาใหม่อีกครั้ง")
+               return redirect('/formleave')        
+            
+        elif form.typeleave =='P' :
+            type = 'ลากิจ'
+            form_instance = Form.objects.filter(username_id=username_id,show=0,typeleave='P').aggregate(total_sum=Sum('numberleave'))
+            form_sum = form_instance['total_sum'] if form_instance['total_sum'] is not None else 0
+            remain = number_instance.personal - form_sum
+            leave_remain = number_instance.personal
+            if remain < int(form.numberleave) :
+               messages.success(request,"วันลากิจของคุณไม่เพียงพอ กรุณากรอกฟอร์มขอลาใหม่อีกครั้ง")
+               return redirect('/formleave')      
+           
+        else :
+            type = 'ลาพักร้อน'
+            form_instance = Form.objects.filter(username_id=username_id,show=0,typeleave='V').aggregate(total_sum=Sum('numberleave'))
+            form_sum = form_instance['total_sum'] if form_instance['total_sum'] is not None else 0
+            remain = number_instance.vacation - form_sum
+            leave_remain = number_instance.vacation
+            if remain < int(form.numberleave) :
+               messages.success(request,"วันลาพักร้อนของคุณไม่เพียงพอ กรุณากรอกฟอร์มขอลาใหม่อีกครั้ง")
+               return redirect('/formleave')  
+    
+        form.save()
+
+        leader = request.user.leader
+        person_instance = Person.objects.filter(username=leader).first()
+        leader_email = person_instance.email
+        leader_frist = person_instance.first_name
+        leader_last = person_instance.last_name
+        
+        formatted_From = datetime.strptime(form.From_Date, "%Y-%m-%d").strftime(date_format)
+        formatted_To = datetime.strptime(form.To_Date, "%Y-%m-%d").strftime(date_format)
+
+        username = request.user.username
+        person = Person.objects.filter(username=username)        
+        html = render_to_string('emails/contactform.html',{
+            'leader_frist':leader_frist,
+            'leader_last':leader_last,
+            'person':person,
+            'type':type,
+            'numberleave':form.numberleave,
+            'From_Date':formatted_From,
+            'To_Date':formatted_To,
+            'reason':form.reason,
+            'leave_remain':leave_remain
+        })
+        
+        send_mail('เรื่อง ขออนุญาติลา (แก้ไขวันลา)','Hello', 'patinya590@gmail.com' , [leader_email],html_message=html)
+        return redirect('/status')            
+    else :
+    #ถ้าไม่มีการส่งข้อมูลมาใช้ข้อมูลเดิม
+        form = Form.objects.get(pk=person_id)
+        return render(request,"edit.html",{"form":form})
+
+def delete(request,person_id) :
+    form = Form.objects.get(pk=person_id)    
+    form.delete()
+    messages.success(request,"ยกเลิกฟอร์มการลานี้เรียบร้อย")
+    return redirect("/status")
 
 def status(request) :
     # if request.method == "POST" :
@@ -202,61 +311,123 @@ def approve(request) :
 
 
 def success(request,person_id):
+    
+    leader_frist = request.user.first_name
+    leader_last = request.user.last_name
+    
     # เรียกใช้ข้อมูลจากโมเดล Form
     form_instance = Form.objects.get(pk=person_id)
     numberleave_value = form_instance.numberleave
     typeleave_value = form_instance.typeleave
-    
+    From_Date=form_instance.From_Date
+    To_Date=form_instance.To_Date
+    reason=form_instance.reason
     form_instance.show = 1  #เปลี่ยนเป็นTrue
     form_instance.save() 
-    
+
     # เรียกใช้ข้อมูลจากโมเดล Number
     number_instance = Number.objects.filter(username=form_instance.username).first()
     
     if typeleave_value =='S' :
-        number_instance.sick -= numberleave_value       
+        type = 'ลาป่วย'
+        number_instance.sick -= numberleave_value   
+        leave_remain = number_instance.sick
     elif typeleave_value =='P' :
+        type = 'ลากิจ'
         number_instance.personal -= numberleave_value
+        leave_remain = number_instance.personal
+
     else :
+        type = 'ลาพักร้อน'
         number_instance.vacation -= numberleave_value
+        leave_remain = number_instance.vacation
+
         
     number_instance.save()       
     
     # เรียกใช้ข้อมูลจากโมเดล Person
     person_instance = Person.objects.filter(username=form_instance.username).first()
     person_email = person_instance.email
-
-
-    subject = 'Test Email'
-    body = '''
-        <p> mission complete  </p>
-    '''
-    email = EmailMessage(subject=subject , body=body , to=[person_email])
-    email.content_subtype = 'html'
-    email.send()
-    # messages.success(request,"อนุมัติคำขอของคุณ")
-    return redirect("/approve")
-
+    
+    statas = 'อนุมัติ'
+          
+    html = render_to_string('emails/statusform.html',{
+        'leader_frist':leader_frist,
+        'leader_last':leader_last,
+        'first_name':person_instance.first_name,
+        'last_name':person_instance.last_name,
+        'position':person_instance.position,
+        'team':person_instance.team,
+        'level':person_instance.level,
+        'type':type,
+        'numberleave':numberleave_value,
+        'From_Date':From_Date.strftime("%d %b %Y"),
+        'To_Date':To_Date.strftime("%d %b %Y"),
+        'reason':reason,
+        'leave_remain':leave_remain,
+        'statas':statas
+    })
+    
+    send_mail('เรื่อง แจ้งผลอนุมัติการลา ','Hello', 'patinya590@gmail.com' , [person_email],html_message=html)
+    return redirect('/approve')  
 
 
 def unsuccess(request,person_id) :
+    leader_frist = request.user.first_name
+    leader_last = request.user.last_name
+    
     form_instance = Form.objects.get(pk=person_id)
+    numberleave_value = form_instance.numberleave
+    typeleave_value = form_instance.typeleave
+    From_Date=form_instance.From_Date
+    To_Date=form_instance.To_Date
+    reason=form_instance.reason
+    
     form_instance.show = 1  #เปลี่ยนเป็นTrue
     form_instance.save() 
+        
+    # เรียกใช้ข้อมูลจากโมเดล Number
+    number_instance = Number.objects.filter(username=form_instance.username).first()
     
+    if typeleave_value =='S' :
+        type = 'ลาป่วย'
+        leave_remain = number_instance.sick
+    elif typeleave_value =='P' :
+        type = 'ลากิจ'
+        leave_remain = number_instance.personal
+
+    else :
+        type = 'ลาพักร้อน'
+        leave_remain = number_instance.vacation
+
     # เรียกใช้ข้อมูลจากโมเดล Person
     person_instance = Person.objects.filter(username=form_instance.username).first()
     person_email = person_instance.email
     
-    subject = 'Test Email'
-    body = '''
-        <p> mission fail  </p>
-    '''
-    email = EmailMessage(subject=subject , body=body , to=[person_email])
-    email.content_subtype = 'html'
-    email.send()
-    # messages.success(request,"ไม่อนุมัติคำขอของคุณ")
-    return redirect("/approve")
+    formatted_From = From_Date.strftime("%d %b %Y")
+    formatted_To = To_Date.strftime("%d %b %Y")
+    
+    statas = 'ไม่อนุมัติ'
+        
+    html = render_to_string('emails/statusform.html',{
+        'leader_frist':leader_frist,
+        'leader_last':leader_last,
+        'first_name':person_instance.first_name,
+        'last_name':person_instance.last_name,
+        'position':person_instance.position,
+        'team':person_instance.team,
+        'level':person_instance.level,
+        'type':type,
+        'numberleave':numberleave_value,
+        'From_Date':formatted_From,
+        'To_Date':formatted_To,
+        'reason':reason,
+        'leave_remain':leave_remain,
+        'statas':statas
+    })
+    
+    send_mail('เรื่อง แจ้งผลอนุมัติการลา ','Hello', 'patinya590@gmail.com' , [person_email],html_message=html)
+    return redirect('/approve')  
 
 def logout(request):
     auth.logout(request)

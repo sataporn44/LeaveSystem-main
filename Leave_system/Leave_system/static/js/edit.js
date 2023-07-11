@@ -20,7 +20,7 @@ var holiday = [
 
 $('#datepicker_1 , #datepicker_2').datepicker({
   dateFormat: "d M yy",
-    // minDate: 0,
+    minDate: 0,
     // maxDate: "+4M",
     showButtonPanel: true,
     changeMonth: true,
@@ -52,70 +52,20 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-
-// เพิ่ม event listener ให้กับฟิลด์ From_Date เมื่อมีการเลือกวันที่
-$('#datepicker_1').on('change', function() {
-  var fromDate = new Date($('#datepicker_1').val());
-  $('#datepicker_2').datepicker('setDate', fromDate);
-  enableNumberLeave();
-  calculateLeaveDays();
-
-});
-
-// เพิ่ม event listener ให้กับฟิลด์ To_Date เมื่อมีการเลือกวันที่
-$('#datepicker_2').on('change', function() {
-  calculateLeaveDays();
-});
-
 // เพิ่ม event listener ให้กับฟิลด์ NumberLeave เมื่อมีการเลือกวันที่
 $('#numberLeave').on('change', function() {
   calculateDays();
 });
 
-function enableNumberLeave() {
-  $('#numberLeave').prop('disabled', false);
-  $('#datepicker_2').prop('disabled', false);
+// เพิ่ม event listener ให้กับฟิลด์ From_Date เมื่อมีการเลือกวันที่
+$('#datepicker_1').on('change', function() {
+  calculatenum();
+});
 
-}
-
-function calculateLeaveDays() {
-  var fromDate = new Date($('#datepicker_1').val());
-  var toDate = new Date($('#datepicker_2').val());
-
-  if (fromDate && toDate) {
-    var millisecondsPerDay = 24 * 60 * 60 * 1000; // จำนวนมิลลิวินาทีในหนึ่งวัน
-    var diff = Math.round(((toDate - fromDate) / millisecondsPerDay)+1); // คำนวณจำนวนวันที่ผ่านไป
-
-    var weekends = 0;
-    var holidays = 0;
-
-    for (var i = 0; i < diff; i++) {
-      var currentDate = new Date(fromDate.getTime() + i * millisecondsPerDay);
-      var dayOfWeek = currentDate.getDay();
-
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
-        weekends++;
-      }
-
-      for (var j = 0; j < holiday.length; j++) {
-        var holidayDate = new Date(holiday[j]);
-
-        if (
-          holidayDate.getDate() === currentDate.getDate() &&
-          holidayDate.getMonth() === currentDate.getMonth() &&
-          holidayDate.getFullYear() === currentDate.getFullYear()
-        ) {
-          holidays++;
-          break;
-        }
-      }
-    }
-    var adjustedDiff = diff - weekends - holidays;
-
-    $('#numberLeave').val(adjustedDiff); // แสดงผลลัพธ์ที่ปรับแล้วในฟิลด์ numberLeave
-  }
-}
-
+// เพิ่ม event listener ให้กับฟิลด์ To_Date เมื่อมีการเลือกวันที่
+$('#datepicker_2').on('change', function() {
+  calculatenum();
+});
 
 function calculateDays() {
   var fromDate = new Date($('#datepicker_1').val());
@@ -153,5 +103,44 @@ function calculateDays() {
 
     toDate.setDate(toDate.getDate());
     $('#datepicker_2').datepicker('setDate', toDate);
+  }
+}
+
+
+function calculatenum() {
+  var fromDate = new Date($('#datepicker_1').val());
+  var toDate = new Date($('#datepicker_2').val());
+
+  if (fromDate && toDate) {
+    var millisecondsPerDay = 24 * 60 * 60 * 1000; // จำนวนมิลลิวินาทีในหนึ่งวัน
+    var diff = Math.round(((toDate - fromDate) / millisecondsPerDay)+1); // คำนวณจำนวนวันที่ผ่านไป
+
+    var weekends = 0;
+    var holidays = 0;
+
+    for (var i = 0; i < diff; i++) {
+      var currentDate = new Date(fromDate.getTime() + i * millisecondsPerDay);
+      var dayOfWeek = currentDate.getDay();
+
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        weekends++;
+      }
+
+      for (var j = 0; j < holiday.length; j++) {
+        var holidayDate = new Date(holiday[j]);
+
+        if (
+          holidayDate.getDate() === currentDate.getDate() &&
+          holidayDate.getMonth() === currentDate.getMonth() &&
+          holidayDate.getFullYear() === currentDate.getFullYear()
+        ) {
+          holidays++;
+          break;
+        }
+      }
+    }
+    var adjustedDiff = diff - weekends - holidays;
+
+    $('#numberLeave').val(adjustedDiff); // แสดงผลลัพธ์ที่ปรับแล้วในฟิลด์ numberLeave
   }
 }

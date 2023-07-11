@@ -18,8 +18,8 @@ class Person(AbstractUser):
     tel = models.CharField(max_length=20,null = True)
     team = models.CharField(max_length=100,null=True) 
     position = models.CharField(max_length=100,null=True) 
-    leader = models.CharField(max_length=100,null=True)
-    level = models.IntegerField(default=1)   #ลาพักร้อน 
+    leader = models.CharField(max_length=100,null=True) 
+    level = models.CharField(max_length=1,null=True)   #ลาพักร้อน
 
     def __str__(self):
         return str(self.username)
