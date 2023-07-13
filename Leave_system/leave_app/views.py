@@ -13,10 +13,11 @@ from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
+
 def home(request) :
     return render(request,"home.html")
 
-@login_required
+@login_required(login_url='/')
 def info(request):
     try:
         person=Person.objects.get(username=request.username)
@@ -45,6 +46,7 @@ def login(request):
         messages.info(request, 'Username or Password is incorrect')
         return redirect('/')
 
+@login_required(login_url='/')
 def createForm(request):
     return render(request, 'createForm.html')
 
@@ -94,10 +96,12 @@ def addForm(request):
 
     else:
         return render(request, "createForm.html")
-    
+
+@login_required(login_url='/')   
 def result(request):
     return render(request, 'result.html')
 
+@login_required(login_url='/')
 def formleave(request) :
     if request.method == "POST" :
         #รับข้อมูล
@@ -197,6 +201,7 @@ def formleave(request) :
         return redirect('/status')        
     return render(request, 'formleave.html') 
 
+@login_required(login_url='/')
 def edit(request,person_id) :
     if request.method == "POST" :
     #เมื่อมีการส่งข้อมูลมา
@@ -289,12 +294,14 @@ def edit(request,person_id) :
         form = Form.objects.get(pk=person_id)
         return render(request,"edit.html",{"form":form})
 
+@login_required( login_url='/')
 def delete(request,person_id) :
     form = Form.objects.get(pk=person_id)    
     form.delete()
     messages.success(request,"ยกเลิกฟอร์มการลานี้เรียบร้อย")
     return redirect("/status")
 
+@login_required( login_url='/')
 def status(request) :
     # if request.method == "POST" :
     username_id = request.user.id 
@@ -303,7 +310,7 @@ def status(request) :
     
     return render(request,"status.html",{"all_person":all_person , "all_number":all_number})
 
-   
+@login_required( login_url='/')
 def approve(request) :
     username = request.user.username
     allow = Form.objects.filter(username__leader=username,show=0)

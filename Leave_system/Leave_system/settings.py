@@ -148,3 +148,5 @@ EMAIL_HOST_USER = 'patinya590@gmail.com	'
 EMAIL_HOST_PASSWORD = 'pktjksqvowlzmufg'
 
 SESSION_COOKIE_AGE = 60 * 60  # หมดอายุใน 60 นาที
+
+# LOGIN_URL = '/accounts/login/'
