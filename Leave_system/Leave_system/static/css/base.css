@@ -15,7 +15,7 @@
     position: relative;
     display: block;
     text-align: center;
-      color: whitesmoke;
+      color: whitesmoke !important;
     font-weight: bolder;
     padding: 5px 12px;
     text-align: left;
