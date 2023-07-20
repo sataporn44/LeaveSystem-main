@@ -44,6 +44,7 @@ body{
     width: 100%;
     background: white;
     padding: 40px;
+    border-radius: 0.5rem ;
   }
 
   .formbold-form-title {
